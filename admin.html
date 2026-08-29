@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — D' Fem Tech Hub</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .admin-wrap{ max-width:1080px; margin:0 auto; padding:48px 24px 80px; }
+  .login-box{ max-width:380px; margin:100px auto; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:36px; }
+  .login-box input{ width:100%; border:1.5px solid var(--line); border-radius:10px; padding:12px 14px; font-size:14.5px; font-family:var(--body); }
+  .login-box input:focus{ outline:none; border-color:var(--blue); }
+  table{ width:100%; border-collapse:collapse; background:var(--panel); border-radius:var(--radius); overflow:hidden; }
+  th, td{ text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); font-size:13.5px; vertical-align:top; }
+  th{ background:var(--navy); color:#fff; font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
+  tr:hover td{ background:#f8f9ff; }
+  .msg-cell{ max-width:280px; white-space:normal; line-height:1.5; }
+  .empty{ text-align:center; padding:70px 20px; color:var(--muted); background:var(--panel); border-radius:var(--radius); border:1px solid var(--line); }
+  .table-scroll{ overflow-x:auto; border-radius:var(--radius); }
+  .badge{ display:inline-block; padding:3px 10px; border-radius:999px; font-size:11.5px; font-weight:600; background:rgba(33,53,230,.1); color:var(--blue); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner container">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="D' Fem Tech Hub logo"></a>
+    <div class="nav-links"><a href="index.html">← Back to site</a></div>
+  </div>
+</nav>
+
+<div id="login-view" class="login-box">
+  <h2 style="font-size:22px; margin-bottom:8px; font-family:var(--display);">Admin Login</h2>
+  <p style="color:var(--muted); font-size:14px; margin-bottom:20px;">Enter your admin key to view website enquiries.</p>
+  <div style="margin-bottom:16px;">
+    <input id="admin-key-input" type="password" placeholder="Admin key" autocomplete="off">
+  </div>
+  <button id="login-btn" class="btn btn-primary" style="width:100%; justify-content:center;">Log in</button>
+  <p id="login-error" style="color:#c0392b; font-size:13.5px; margin-top:12px; min-height:18px;"></p>
+</div>
+
+<div id="dashboard-view" class="admin-wrap" style="display:none;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:14px;">
+    <div>
+      <span class="eyebrow">ADMIN DASHBOARD</span>
+      <h2 style="font-size:26px; margin-top:8px;">Website Enquiries</h2>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button id="refresh-btn" class="btn btn-dark">↻ Refresh</button>
+      <button id="logout-btn" class="btn" style="background:#fff; border:1.5px solid var(--line);">Log out</button>
+    </div>
+  </div>
+  <div id="table-wrap"><p class="empty">Loading…</p></div>
+</div>
+
+<script>
+const loginView = document.getElementById('login-view');
+const dashboardView = document.getElementById('dashboard-view');
+const keyInput = document.getElementById('admin-key-input');
+const loginBtn = document.getElementById('login-btn');
+const loginError = document.getElementById('login-error');
+const tableWrap = document.getElementById('table-wrap');
+
+function getKey(){ return sessionStorage.getItem('adminKey'); }
+
+function showLogin(msg){
+  dashboardView.style.display = 'none';
+  loginView.style.display = 'block';
+  loginError.textContent = msg || '';
+  keyInput.value = '';
+  keyInput.focus();
+}
+
+function showDashboard(){
+  loginView.style.display = 'none';
+  dashboardView.style.display = 'block';
+  loadEnquiries();
+}
+
+async function loadEnquiries(){
+  tableWrap.innerHTML = '<p class="empty">Loading…</p>';
+  try {
+    const res = await fetch('/api/enquiries', { headers: { 'x-admin-key': getKey() } });
+    if(res.status === 401){
+      sessionStorage.removeItem('adminKey');
+      showLogin('Session expired — please log in again.');
+      return;
+    }
+    const data = await res.json();
+    if(!data.enquiries || data.enquiries.length === 0){
+      tableWrap.innerHTML = '<p class="empty">No enquiries yet — they\'ll show up here as soon as someone submits the contact form.</p>';
+      return;
+    }
+    const rows = data.enquiries.map(e => `
+      <tr>
+        <td>${new Date(e.created_at).toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' })}</td>
+        <td><b>${escapeHtml(e.name || '')}</b></td>
+        <td><a href="tel:${escapeHtml(e.phone || '')}">${escapeHtml(e.phone || '')}</a></td>
+        <td>${e.email ? `<a href="mailto:${escapeHtml(e.email)}">${escapeHtml(e.email)}</a>` : '—'}</td>
+        <td><span class="badge">${escapeHtml(e.service || 'General')}</span></td>
+        <td class="msg-cell">${escapeHtml(e.message || '—')}</td>
+      </tr>
+    `).join('');
+    tableWrap.innerHTML = `
+      <p style="font-size:13.5px; color:var(--muted); margin-bottom:14px;">${data.enquiries.length} enquir${data.enquiries.length === 1 ? 'y' : 'ies'} total</p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Service</th><th>Message</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+  } catch(err){
+    tableWrap.innerHTML = '<p class="empty">Something went wrong loading enquiries. Try refreshing.</p>';
+  }
+}
+
+function escapeHtml(str){
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+loginBtn.addEventListener('click', async () => {
+  const key = keyInput.value.trim();
+  if(!key){ loginError.textContent = 'Enter your admin key.'; return; }
+  loginError.textContent = '';
+  const res = await fetch('/api/enquiries', { headers: { 'x-admin-key': key } });
+  if(res.status === 401){
+    loginError.textContent = 'Incorrect admin key.';
+    return;
+  }
+  sessionStorage.setItem('adminKey', key);
+  showDashboard();
+});
+keyInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') loginBtn.click(); });
+
+document.getElementById('refresh-btn').addEventListener('click', loadEnquiries);
+document.getElementById('logout-btn').addEventListener('click', () => {
+  sessionStorage.removeItem('adminKey');
+  showLogin();
+});
+
+if(getKey()){ showDashboard(); }
+</script>
+
+</body>
+</html>
