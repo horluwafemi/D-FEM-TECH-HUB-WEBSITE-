@@ -68,3 +68,43 @@ if(form){
     }
   });
 }
+
+// Testimonial carousel
+(function(){
+  const track = document.getElementById('testimonial-track');
+  if(!track) return;
+  const slides = track.children;
+  const dots = document.querySelectorAll('.testimonial-dot');
+  const prevBtn = document.getElementById('testimonial-prev');
+  const nextBtn = document.getElementById('testimonial-next');
+  let index = 0;
+  let timer;
+
+  function goTo(i){
+    index = (i + slides.length) % slides.length;
+    track.style.transform = `translateX(-${index * 100}%)`;
+    dots.forEach((d, di) => d.classList.toggle('active', di === index));
+  }
+
+  function startAutoplay(){
+    clearInterval(timer);
+    timer = setInterval(() => goTo(index + 1), 6000);
+  }
+
+  prevBtn.addEventListener('click', () => { goTo(index - 1); startAutoplay(); });
+  nextBtn.addEventListener('click', () => { goTo(index + 1); startAutoplay(); });
+  dots.forEach(dot => dot.addEventListener('click', () => { goTo(Number(dot.dataset.slide)); startAutoplay(); }));
+
+  // basic swipe support on touch devices
+  let touchStartX = 0;
+  track.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend', (e) => {
+    const diff = e.changedTouches[0].clientX - touchStartX;
+    if(diff > 40) goTo(index - 1);
+    else if(diff < -40) goTo(index + 1);
+    startAutoplay();
+  }, { passive: true });
+
+  goTo(0);
+  startAutoplay();
+})();

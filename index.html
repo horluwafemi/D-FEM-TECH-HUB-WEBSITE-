@@ -178,20 +178,56 @@
 <section>
   <div class="container">
     <div class="section-head reveal" style="margin:0 auto 40px; text-align:center; max-width:640px;">
-      <span class="eyebrow" style="justify-content:center;">CLIENT REVIEW</span>
+      <span class="eyebrow" style="justify-content:center;">CLIENT REVIEWS</span>
       <h2>What our clients are saying.</h2>
     </div>
-    <div class="reveal" style="max-width:760px; margin:0 auto; background:var(--panel); border:1px solid var(--line); border-radius:22px; padding:44px; text-align:center; position:relative;">
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="var(--purple)" style="opacity:.18; margin:0 auto 10px;"><path d="M9.5 7C6.5 8 4 10.8 4 14.2 4 17 6 19 8.5 19S13 17 13 14.5c0-2.2-1.6-4-3.7-4.3.4-1.3 1.7-2.6 3.2-3.2L9.5 7zm10 0c-3 1-5.5 3.8-5.5 7.2 0 2.8 2 4.8 4.5 4.8S23 17 23 14.5c0-2.2-1.6-4-3.7-4.3.4-1.3 1.7-2.6 3.2-3.2L19.5 7z"/></svg>
-      <p style="font-size:17.5px; line-height:1.7; color:var(--ink); max-width:600px; margin:0 auto;">
-        Excellent IT Service &amp; Professionalism! I highly recommend FEM TECH HUB for their exceptional IT services. Their team is professional, knowledgeable, reliable, and always willing to go the extra mile to get the job done properly. The quality of their work, attention to detail, quick response, and customer service are truly impressive. If you're looking for a trustworthy and competent IT service provider, FEM TECH HUB is definitely the right choice. Excellent service all round. Highly recommended! 👏🏽
-      </p>
-      <div style="margin-top:24px; display:flex; align-items:center; justify-content:center; gap:10px;">
-        <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--purple)); display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--display); font-weight:700;">P</div>
-        <div style="text-align:left;">
-          <div style="font-weight:700; font-size:14.5px;">ProTech Painting</div>
-          <div style="font-size:12.5px; color:var(--muted);">★★★★★ Verified client review</div>
+
+    <div class="reveal testimonial-carousel">
+      <div class="testimonial-viewport">
+        <div class="testimonial-track" id="testimonial-track">
+
+          <div class="testimonial-slide">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="var(--purple)" style="opacity:.18; margin:0 auto 10px;"><path d="M9.5 7C6.5 8 4 10.8 4 14.2 4 17 6 19 8.5 19S13 17 13 14.5c0-2.2-1.6-4-3.7-4.3.4-1.3 1.7-2.6 3.2-3.2L9.5 7zm10 0c-3 1-5.5 3.8-5.5 7.2 0 2.8 2 4.8 4.5 4.8S23 17 23 14.5c0-2.2-1.6-4-3.7-4.3.4-1.3 1.7-2.6 3.2-3.2L19.5 7z"/></svg>
+            <p>
+              Excellent IT Service &amp; Professionalism! I highly recommend FEM TECH HUB for their exceptional IT services. Their team is professional, knowledgeable, reliable, and always willing to go the extra mile to get the job done properly. The quality of their work, attention to detail, quick response, and customer service are truly impressive. If you're looking for a trustworthy and competent IT service provider, FEM TECH HUB is definitely the right choice. Excellent service all round. Highly recommended! 👏🏽
+            </p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">P</div>
+              <div>
+                <div class="testimonial-name">ProTech Painting</div>
+                <div class="testimonial-meta">★★★★★ Verified client review</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-slide">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="var(--purple)" style="opacity:.18; margin:0 auto 10px;"><path d="M9.5 7C6.5 8 4 10.8 4 14.2 4 17 6 19 8.5 19S13 17 13 14.5c0-2.2-1.6-4-3.7-4.3.4-1.3 1.7-2.6 3.2-3.2L9.5 7zm10 0c-3 1-5.5 3.8-5.5 7.2 0 2.8 2 4.8 4.5 4.8S23 17 23 14.5c0-2.2-1.6-4-3.7-4.3.4-1.3 1.7-2.6 3.2-3.2L19.5 7z"/></svg>
+            <p>
+              He did a very good job, both computers are in a good state.
+            </p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">M</div>
+              <div>
+                <div class="testimonial-name">Mercy Chukwudubem</div>
+                <div class="testimonial-meta">★★★★★ Verified client review</div>
+              </div>
+            </div>
+          </div>
+
         </div>
+      </div>
+
+      <div class="testimonial-nav">
+        <button class="testimonial-arrow" id="testimonial-prev" aria-label="Previous review">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="testimonial-dots" id="testimonial-dots">
+          <button class="testimonial-dot active" data-slide="0" aria-label="Review 1"></button>
+          <button class="testimonial-dot" data-slide="1" aria-label="Review 2"></button>
+        </div>
+        <button class="testimonial-arrow" id="testimonial-next" aria-label="Next review">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
       </div>
     </div>
   </div>
